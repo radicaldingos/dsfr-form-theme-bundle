@@ -1,0 +1,210 @@
+{#
+Thème de formulaire Twig adapté au Design System de l'État (DSFR) v1.7.2
+https://www.systeme-de-design.gouv.fr/
+#}
+
+{% use "form_div_layout.html.twig" %}
+
+{# Labels #}
+{%- block form_label -%}
+    {% if label is not same as(false) -%}
+        {% if not compound -%}
+            {% set label_attr = label_attr|merge({'for': id}) %}
+        {%- endif -%}
+        {% if required -%}
+            {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' required')|trim}) %}
+        {%- endif -%}
+        {% if label is empty -%}
+            {%- if label_format is not empty -%}
+                {% set label = label_format|replace({
+                    '%name%': name,
+                    '%id%': id,
+                }) %}
+            {%- else -%}
+                {% set label = name|humanize %}
+            {%- endif -%}
+        {%- endif -%}
+        {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' fr-label')|trim}) %}
+        <{{ element|default('label') }}{% if label_attr %}{% with { attr: label_attr } %}{{ block('attributes') }}{% endwith %}{% endif %}>
+        {%- if translation_domain is same as(false) -%}
+            {%- if label_html is defined and label_html is same as(false) -%}
+                {{- label -}}
+            {%- else -%}
+                {{- label|raw -}}
+            {%- endif -%}
+        {%- else -%}
+            {%- if label_html is defined and label_html is same as(false) -%}
+                {{- label|trans(label_translation_parameters, translation_domain) -}}
+            {%- else -%}
+                {{- label|trans(label_translation_parameters, translation_domain)|raw -}}
+            {%- endif -%}
+        {%- endif -%}
+        {%- if type|default('') == 'file' -%}
+            {{- form_help(form) -}}
+        {%- endif -%}
+        </{{ element|default('label') }}>
+    {%- endif -%}
+{%- endblock form_label -%}
+
+{# Widgets #}
+{%- block form_widget_simple -%}
+    {%- if type is not defined or type != 'hidden' -%}
+        {%- set className = ' fr-input' -%}
+        {%- if type|default('') == 'file' -%}
+            {%- set className = ' fr-upload' -%}
+        {%- endif -%}
+        {%- set attr = attr|merge({class: (attr.class|default('') ~ className)|trim}) -%}
+    {%- endif -%}
+    {%- if not valid -%}
+        {% set attr = attr|merge({class: (attr.class|default('') ~ ' fr-input--error')|trim}) -%}
+    {%- endif -%}
+    {{- parent() -}}
+{%- endblock form_widget_simple -%}
+
+{%- block textarea_widget -%}
+    {% set attr = attr|merge({class: (attr.class|default('') ~ ' fr-input')|trim}) -%}
+    {{- parent() -}}
+{%- endblock textarea_widget -%}
+
+{%- block choice_widget_collapsed -%}
+    {% set attr = attr|merge({class: (attr.class|default('') ~ ' fr-select')|trim}) -%}
+    {%- if not valid -%}
+        {% set attr = attr|merge({class: (attr.class|default('') ~ ' fr-select--error')|trim}) -%}
+    {%- endif -%}
+    {{- parent() -}}
+{%- endblock choice_widget_collapsed -%}
+
+{%- block submit_widget -%}
+    {% set attr = attr|merge({class: (attr.class|default('') ~ ' fr-btn')|trim}) -%}
+    {{- parent() -}}
+{%- endblock submit_widget -%}
+
+{%- block reset_widget -%}
+    {% set attr = attr|merge({class: (attr.class|default('') ~ ' fr-btn')|trim}) -%}
+    {{- parent() -}}
+{%- endblock reset_widget -%}
+
+{# Rows #}
+{%- block form_row -%}
+    {%- set widget_attr = {} -%}
+    {%- if help is not empty -%}
+        {%- set widget_attr = {attr: {'aria-describedby': id ~"_help"}} -%}
+    {%- endif -%}
+    {% set row_attr = row_attr|merge({class: (row_attr.class|default('') ~ ' fr-input-group')|trim}) -%}
+    {%- if not valid -%}
+        {% set row_attr = row_attr|merge({class: (row_attr.class|default('') ~ ' fr-input-group--error')|trim}) -%}
+    {%- endif -%}
+    {%- if disabled is not empty -%}
+        {% set row_attr = row_attr|merge({class: (row_attr.class|default('') ~ ' fr-input-group--disabled')|trim}) -%}
+    {%- endif -%}
+    <div{% with {attr: row_attr} %}{{ block('attributes') }}{% endwith %}>
+        {{- form_label(form) -}}
+        {{- form_help(form) -}}
+        {{- form_widget(form, widget_attr) -}}
+        {{- form_errors(form) -}}
+    </div>
+{%- endblock form_row -%}
+
+{%- block choice_row -%}
+    {%- set widget_attr = {} -%}
+    {%- if help is not empty -%}
+        {%- set widget_attr = {attr: {'aria-describedby': id ~"_help"}} -%}
+    {%- endif -%}
+    {% set row_attr = row_attr|merge({class: (row_attr.class|default('') ~ ' fr-select-group')|trim}) -%}
+    {%- if not valid -%}
+        {% set row_attr = row_attr|merge({class: (row_attr.class|default('') ~ ' fr-select-group--error')|trim}) -%}
+    {%- endif -%}
+    {%- if disabled is not empty -%}
+        {% set row_attr = row_attr|merge({class: (row_attr.class|default('') ~ ' fr-select-group--disabled')|trim}) -%}
+    {%- endif -%}
+    <div{% with {attr: row_attr} %}{{ block('attributes') }}{% endwith %}>
+        {{- form_label(form) -}}
+        {{- form_help(form) -}}
+        {{- form_widget(form, widget_attr) -}}
+        {{- form_errors(form) -}}
+    </div>
+{%- endblock choice_row -%}
+
+{%- block checkbox_row -%}
+    {%- set widget_attr = {} -%}
+    {%- if help is not empty -%}
+        {%- set widget_attr = {attr: {'aria-describedby': id ~"_help"}} -%}
+    {%- endif -%}
+    {% set row_attr = row_attr|merge({class: (row_attr.class|default('') ~ ' fr-checkbox-group')|trim}) -%}
+    {%- if not valid -%}
+        {% set row_attr = row_attr|merge({class: (row_attr.class|default('') ~ ' fr-checkbox-group--error')|trim}) -%}
+    {%- endif -%}
+    {%- if disabled is not empty -%}
+        {% set row_attr = row_attr|merge({class: (row_attr.class|default('') ~ ' fr-checkbox-group--disabled')|trim}) -%}
+    {%- endif -%}
+    <div{% with {attr: row_attr} %}{{ block('attributes') }}{% endwith %}>
+        {{- form_widget(form, widget_attr) -}}
+        {{- form_label(form) -}}
+        {{- form_help(form) -}}
+        {{- form_errors(form) -}}
+    </div>
+{%- endblock checkbox_row -%}
+
+{%- block file_row -%}
+    {%- set widget_attr = {} -%}
+    {%- if help is not empty -%}
+        {%- set widget_attr = {attr: {'aria-describedby': id ~"_help"}} -%}
+    {%- endif -%}
+    {% set row_attr = row_attr|merge({class: (row_attr.class|default('') ~ ' fr-upload-group')|trim}) -%}
+    {%- if not valid -%}
+        {% set row_attr = row_attr|merge({class: (row_attr.class|default('') ~ ' fr-input-group--error')|trim}) -%}
+    {%- endif -%}
+    {%- if disabled is not empty -%}
+        {% set row_attr = row_attr|merge({class: (row_attr.class|default('') ~ ' fr-input-group--disabled')|trim}) -%}
+    {%- endif -%}
+    <div{% with {attr: row_attr} %}{{ block('attributes') }}{% endwith %}>
+        {{- form_label(form) -}}
+        {{- form_widget(form, widget_attr) -}}
+        {{- form_errors(form) -}}
+    </div>
+{%- endblock file_row -%}
+
+{%- block search_row -%}
+    {%- set widget_attr = {} -%}
+    {%- if help is not empty -%}
+        {%- set widget_attr = {attr: {'aria-describedby': id ~"_help"}} -%}
+    {%- endif -%}
+    {% set row_attr = row_attr|merge({class: (row_attr.class|default('') ~ ' fr-search-bar')|trim}) -%}
+    {% set row_attr = row_attr|merge({role: (row_attr.role|default('search'))|trim}) -%}
+    <div{% with {attr: row_attr} %}{{ block('attributes') }}{% endwith %}>
+        {{- form_label(form) -}}
+        {{- form_widget(form, widget_attr) -}}
+        {{- block('submit_widget') -}}
+    </div>
+{%- endblock search_row -%}
+
+{# Aide #}
+{% block form_help -%}
+    {%- if help is not empty -%}
+        {%- set help_attr = help_attr|merge({class: (help_attr.class|default('') ~ ' fr-hint-text')|trim}) -%}
+        <span id="{{ id }}_help"{% with { attr: help_attr } %}{{ block('attributes') }}{% endwith %}>
+            {%- if translation_domain is same as(false) -%}
+                {%- if help_html is same as(false) -%}
+                    {{- help -}}
+                {%- else -%}
+                    {{- help|raw -}}
+                {%- endif -%}
+            {%- else -%}
+                {%- if help_html is same as(false) -%}
+                    {{- help|trans(help_translation_parameters, translation_domain) -}}
+                {%- else -%}
+                    {{- help|trans(help_translation_parameters, translation_domain)|raw -}}
+                {%- endif -%}
+            {%- endif -%}
+        </span>
+    {%- endif -%}
+{%- endblock form_help %}
+
+{# Erreurs #}
+{%- block form_errors -%}
+    {%- if errors|length > 0 -%}
+        {%- for error in errors -%}
+            <p id="{{ id }}-error-desc" class="fr-error-text">{{ error.message }}</p>
+        {%- endfor -%}
+    {%- endif %}
+{%- endblock form_errors %}
