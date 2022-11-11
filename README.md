@@ -7,7 +7,9 @@ A Symfony 4+ bundle integrating "Système de Design de l'État" (DSFR).
 
 ## Installation
 
-Install it with Composer:
+First of all, the DSFR library needs to be installed in your project. Please refer to Symfony documentation to install it.
+
+Then, install the bundle with Composer:
 ```
 composer require radicaldingos/dsfr-bundle
 ```

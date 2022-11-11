@@ -1,6 +1,6 @@
 {
     "name": "radicaldingos/dsfr-bundle",
-    "description": "Bundle integrating \"Système de Design de l'État\" (DSFR) for use with the Symfony 4+ framework",
+    "description": "Bundle integrating \"Système de Design de l'État\" (DSFR) for use with the Symfony 4.4+ framework",
     "type": "symfony-bundle",
     "license": "MIT",
     "authors": [
