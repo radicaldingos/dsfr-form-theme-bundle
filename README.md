@@ -1,25 +1,43 @@
-# dsfr-twig-form-theme
-A Twig Form Theme for "Système de Design de l'État" (DSFR) for use with the Symfony 2+ framework
-
----
+# DsfrBundle
+A Symfony 4+ bundle integrating "Système de Design de l'État" (DSFR).
 
 ## Index
-  * [How to use the form theme](#how-to-use-the-form-theme)
-  * [Examples](#examples)
-  * [Sources](#sources)
+ * [Installation](#installation)
+ * [Sources](#sources)
 
-## How to use this form theme:
+## Installation
 
-This form theme was built to work with Twig in combination with the Symfony Framework. 
+Install it with Composer:
+```
+composer require radicaldingos/dsfr-bundle
+```
 
-The easiest way to make use of this form theme in Symfony is just to copy the form theme file (dsfr-form-theme.html.twig) somewhere in the templates folder of your project.
+And enable it by adding it to your `config/bundles.php` file:
 
-But the best way is to install this form theme and set it in the configuration file. Have a look at the [Symfony documentation](https://symfony.com/doc/current/form/form_customization.html#making-application-wide-customizations). Also example files are provided in this repository.
-This way you will benefit of this package update with Composer.
+```php
+# config/bundles.php
+return [
+    ...
+    RadicalDingos\DsfrBundle\RadicalDingosDsfrBundle::class => ['all' => true],
+];
+```
 
-## Examples
+If you just want to use the form theme, another easiest way is just to copy the form theme file `Resources\views\Form\dsfr-form-theme.html.twig` somewhere in the *templates* folder of your project. This way is not recommended as you will not be able to update this form theme with Composer.
 
-### 
+
+## How to use the form theme
+
+For now, this bundle only contains a form theme which was built to work with Twig in combination with the Symfony Framework.
+
+To globally use this form theme in all your project, edit the `config/packages/twig.yaml` file of your project and add it to the *form_themes* section :
+```yaml
+twig:
+    form_themes:
+        - '@RadicalDingosDsfr/Form/dsfr_form_theme.html.twig'
+```
+
+Have a look at the [Symfony documentation](https://symfony.com/doc/current/form/form_customization.html#making-application-wide-customizations). Also example files are provided in this repository.
+
 
 ## Sources
 
