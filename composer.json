@@ -1,6 +1,6 @@
 {
-    "name": "radicaldingos/dsfr-bundle",
-    "description": "Bundle integrating \"Système de Design de l'État\" (DSFR) for use with the Symfony 4.4+ framework",
+    "name": "radicaldingos/dsfr-form-theme-bundle",
+    "description": "A Symfony 4+ bundle integrating a Twig form theme for \"Système de Design de l'État\" (DSFR)",
     "type": "symfony-bundle",
     "license": "MIT",
     "authors": [
@@ -16,7 +16,7 @@
     },
     "autoload": {
         "psr-4": {
-            "RadicalDingos\\DsfrBundle\\": ""
+            "RadicalDingos\\DsfrFormThemeBundle\\": ""
         }
     }
 }
