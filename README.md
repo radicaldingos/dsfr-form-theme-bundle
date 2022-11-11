@@ -33,7 +33,7 @@ To globally use this form theme in all your project, edit the `config/packages/t
 ```yaml
 twig:
     form_themes:
-        - '@RadicalDingosDsfr/Form/dsfr_form_theme.html.twig'
+        - '@RadicalDingosDsfrFormTheme/Form/dsfr_form_theme.html.twig'
 ```
 
 Have a look at the [Symfony documentation](https://symfony.com/doc/current/form/form_customization.html#making-application-wide-customizations). Also example files are provided in this repository.
