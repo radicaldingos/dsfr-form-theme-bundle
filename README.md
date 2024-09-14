@@ -3,6 +3,7 @@ A Symfony 4+ bundle integrating a Twig form theme for "SystÃ¨me de Design de l'Ã
 
 ## Index
  * [Installation](#installation)
+ * [How to use the form theme](#how-to-use-the-form-theme)
  * [Sources](#sources)
 
 ## Installation
@@ -17,7 +18,6 @@ composer require radicaldingos/dsfr-form-theme-bundle
 And assure it's enabled in your `config/bundles.php` file (add this line if it's not):
 
 ```php
-# config/bundles.php
 return [
     ...
     RadicalDingos\DsfrFormThemeBundle\RadicalDingosDsfrFormThemeBundle::class => ['all' => true],
@@ -29,7 +29,7 @@ Another easiest way is just to copy the form theme file `Resources\views\Form\ds
 
 ## How to use the form theme
 
-To globally use this form theme in all your project, edit the `config/packages/twig.yaml` file of your project and add it to the *form_themes* section :
+To use this form theme in your whole project, edit the `config/packages/twig.yaml` file of your project and add it to the *form_themes* section :
 ```yaml
 twig:
     form_themes:
