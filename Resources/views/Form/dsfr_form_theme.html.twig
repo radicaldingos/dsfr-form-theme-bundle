@@ -24,7 +24,14 @@ https://www.systeme-de-design.gouv.fr/
                 {% set label = name|humanize %}
             {%- endif -%}
         {%- endif -%}
+
         {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' fr-label')|trim}) %}
+
+        {# Remove  fr-label for fieldset legent      #}
+        {% if label_attr.class matches '/fr-fieldset__legend/' -%}
+            {% set label_attr = label_attr|merge({class: label_attr.class|default('')|replace({'fr-label': ''})|trim}) %}
+        {% endif %}
+
         <{{ element|default('label') }}{% if label_attr %}{% with { attr: label_attr } %}{{ block('attributes') }}{% endwith %}{% endif %}>
         {%- if translation_domain is same as(false) -%}
             {%- if label_html is defined and label_html is same as(false) -%}
@@ -39,7 +46,7 @@ https://www.systeme-de-design.gouv.fr/
                 {{- label|trans(label_translation_parameters, translation_domain)|raw -}}
             {%- endif -%}
         {%- endif -%}
-        {%- if type|default('') == 'file' -%}
+         {%- if type|default('') in ['file', 'label'] -%}
             {{- form_help(form) -}}
         {%- endif -%}
         </{{ element|default('label') }}>
@@ -84,6 +91,20 @@ https://www.systeme-de-design.gouv.fr/
     {{- parent() -}}
 {%- endblock reset_widget -%}
 
+{%- block choice_widget_expanded -%}
+    {% set attr = attr|merge({class: (attr.class|default('') ~ ' ')|trim}) -%}
+    <div {{ block('widget_container_attributes') }}>
+        {%- for child in form %}
+            <div class="fr-fieldset__element" >
+                <div class="{{ multiple is defined and multiple ? 'fr-checkbox-group' : 'fr-radio-group' }}" >
+                    {{- form_widget(child) -}}
+                    {{- form_label(child, null, {translation_domain: choice_translation_domain}) -}}
+                </div>
+            </div>
+        {% endfor -%}
+    </div>
+{%- endblock choice_widget_expanded -%}
+
 {# Rows #}
 {%- block form_row -%}
     {%- set widget_attr = {} -%}
@@ -110,19 +131,36 @@ https://www.systeme-de-design.gouv.fr/
     {%- if help is not empty -%}
         {%- set widget_attr = {attr: {'aria-describedby': id ~"_help"}} -%}
     {%- endif -%}
-    {% set row_attr = row_attr|merge({class: (row_attr.class|default('') ~ ' fr-select-group')|trim}) -%}
+
     {%- if not valid -%}
+
+    {%- if expanded is defined and expanded -%}
+        {% set row_attr = row_attr|merge({class: (row_attr.class|default('') ~ ' fr-fieldset--error')|trim}) -%}
+    {% else %}
         {% set row_attr = row_attr|merge({class: (row_attr.class|default('') ~ ' fr-select-group--error')|trim}) -%}
+    {% endif %}
+
     {%- endif -%}
     {%- if disabled is not empty -%}
         {% set row_attr = row_attr|merge({class: (row_attr.class|default('') ~ ' fr-select-group--disabled')|trim}) -%}
     {%- endif -%}
-    <div{% with {attr: row_attr} %}{{ block('attributes') }}{% endwith %}>
-        {{- form_label(form) -}}
-        {{- form_help(form) -}}
+
+    {%- if expanded is defined and expanded -%}
+        {%- set help_type = 'label' -%}
+        {%- set element = 'fieldset' -%}
+        {% set row_attr = row_attr|merge({class: (row_attr.class|default('') ~ ' fr-fieldset')|trim}) -%}
+        {% set label_element = 'legend' -%}
+        {% set label_attr = label_attr|merge({class: (label_attr.class|default('') ~ ' fr-fieldset__legend--regular fr-fieldset__legend')|trim}) -%}
+     {% else %}
+        {% set row_attr = row_attr|merge({class: (row_attr.class|default('') ~ ' fr-select-group')|trim}) -%}
+    {% endif %}
+
+    <{{ element|default('div')}}{% with {attr: row_attr} %}{{ block('attributes') }}{% endwith %}>
+        {{- form_label(form, null, {element: label_element|default('label'), label_attr: label_attr, type:help_type|default('')}) -}}
+        {% if help_type|default('') != 'label' %}{{- form_help(form) -}}{% endif %}
         {{- form_widget(form, widget_attr) -}}
         {{- form_errors(form) -}}
-    </div>
+    </{{ element|default('div')}}>
 {%- endblock choice_row -%}
 
 {%- block checkbox_row -%}
@@ -203,8 +241,16 @@ https://www.systeme-de-design.gouv.fr/
 {# Erreurs #}
 {%- block form_errors -%}
     {%- if errors|length > 0 -%}
-        {%- for error in errors -%}
-            <p id="{{ id }}-error-desc" class="fr-error-text">{{ error.message }}</p>
-        {%- endfor -%}
+        {% if expanded is defined and expanded %}
+            <div class="fr-messages-group" id="checkboxes-error-messages" aria-live="assertive">
+                {%- for error in errors -%}
+                    <p id="{{ id }}-error-desc" class="fr-message fr-message--error">{{ error.message }}</p>
+                {%- endfor -%}
+            </div>
+        {% else %}
+            {%- for error in errors -%}
+                <p id="{{ id }}-error-desc" class="fr-error-text">{{ error.message }}</p>
+            {%- endfor -%}
+        {%- endif %}
     {%- endif %}
 {%- endblock form_errors %}
